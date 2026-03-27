@@ -3,7 +3,7 @@ import { ThemeProvider } from 'next-themes'
 import { useState } from 'react'
 import { Toaster } from '@/shared/ui/sonner'
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({ children }: Readonly<{ children: React.ReactNode }>) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
   }))

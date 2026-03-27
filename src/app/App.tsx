@@ -4,7 +4,7 @@ import { Providers } from './providers'
 import { AppRoutes } from './routes'
 import { useAdminAuthStore } from '@/features/admin-auth'
 
-function AppInit({ children }: { children: React.ReactNode }) {
+function AppInit({ children }: Readonly<{ children: React.ReactNode }>) {
   const loadUser = useAdminAuthStore(s => s.loadUser)
   useEffect(() => { loadUser() }, [loadUser])
   return <>{children}</>

@@ -8,6 +8,6 @@ const VARIANT_MAP: Record<LoanStatus, 'default' | 'secondary' | 'destructive' | 
   OVERDUE: 'destructive', PAID: 'secondary', CANCELLED: 'outline',
 }
 
-export function LoanStatusBadge({ status }: { status: LoanStatus }) {
+export function LoanStatusBadge({ status }: Readonly<{ status: LoanStatus }>) {
   return <Badge variant={VARIANT_MAP[status] ?? 'outline'}>{LOAN_STATUS_LABELS[status] ?? status}</Badge>
 }

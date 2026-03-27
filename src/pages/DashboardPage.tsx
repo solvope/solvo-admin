@@ -7,9 +7,8 @@ import { LoanStatusBadge } from '@/entities/loan'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { Button } from '@/shared/ui/button'
 import { Skeleton } from '@/shared/ui/skeleton'
-import { formatCurrency, formatDate, getDaysOverdue } from '@/shared/lib/utils'
+import { formatCurrency, formatDate, formatDateTime, getDaysOverdue } from '@/shared/lib/utils'
 import { useAdminAuthStore } from '@/features/admin-auth'
-import { formatDateTime } from '@/shared/lib/utils'
 
 export function DashboardPage() {
   const { user } = useAdminAuthStore()

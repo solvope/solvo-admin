@@ -18,12 +18,12 @@ const STAT_ITEMS = [
   { key: 'totalUsers', label: 'Usuarios', icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
 ] as const
 
-export function StatsGrid({ stats, isLoading }: Props) {
+export function StatsGrid({ stats, isLoading }: Readonly<Props>) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i}><CardContent className="p-5"><Skeleton className="h-16" /></CardContent></Card>
+          <Card key={`stat-${i}`}><CardContent className="p-5"><Skeleton className="h-16" /></CardContent></Card>
         ))}
       </div>
     )
@@ -36,7 +36,7 @@ export function StatsGrid({ stats, isLoading }: Props) {
         return (
           <Card key={key}>
             <CardContent className="p-5 flex items-start gap-4">
-              <div className={`rounded-lg p-2.5 ${bg} flex-shrink-0`}>
+              <div className={`rounded-lg p-2.5 ${bg} shrink-0`}>
                 <Icon className={`h-5 w-5 ${color}`} />
               </div>
               <div>
@@ -50,7 +50,7 @@ export function StatsGrid({ stats, isLoading }: Props) {
       {stats && (
         <Card className="col-span-2 md:col-span-3">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="rounded-lg p-2.5 bg-secondary/10 flex-shrink-0">
+            <div className="rounded-lg p-2.5 bg-secondary/10 shrink-0">
               <DollarSign className="h-5 w-5 text-secondary" />
             </div>
             <div>

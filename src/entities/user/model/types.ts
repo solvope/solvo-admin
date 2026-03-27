@@ -1,3 +1,10 @@
+export type KycUserStatus =
+  | 'PENDING_VERIFICATION'
+  | 'KYC_UNDER_REVIEW'
+  | 'VERIFIED'
+  | 'KYC_REJECTED'
+  | 'SUSPENDED'
+
 export interface AdminUser {
   id: string
   email: string
@@ -6,6 +13,7 @@ export interface AdminUser {
   dni: string
   phone: string
   role: 'CLIENT' | 'ADMIN'
+  status: KycUserStatus
   isSuspended: boolean
   isIdentityVerified: boolean
   emailVerified: boolean

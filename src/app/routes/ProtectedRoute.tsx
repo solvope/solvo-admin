@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { useAdminAuthStore } from '@/features/admin-auth'
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+export function ProtectedRoute({ children }: Readonly<{ children: React.ReactNode }>) {
   const { isAuthenticated, isLoading } = useAdminAuthStore()
   if (isLoading) {
     return (

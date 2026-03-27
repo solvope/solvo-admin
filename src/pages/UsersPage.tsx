@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Search, Loader2 } from 'lucide-react'
 import { adminUsersRepository } from '@/features/manage-loans/api/adminLoansRepository'
+import { type KycUserStatus } from '@/entities/user/model/types'
 import { Card, CardContent } from '@/shared/ui/card'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
@@ -10,6 +11,14 @@ import { Badge } from '@/shared/ui/badge'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/shared/ui/table'
 import { formatDate } from '@/shared/lib/utils'
+
+const KYC_BADGE: Record<KycUserStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; className?: string }> = {
+  VERIFIED: { label: 'Verificado', variant: 'secondary', className: 'bg-green-100 text-green-700 border-green-200' },
+  KYC_UNDER_REVIEW: { label: 'En revisión', variant: 'outline', className: 'bg-yellow-50 text-yellow-700 border-yellow-300' },
+  KYC_REJECTED: { label: 'Rechazado', variant: 'destructive' },
+  PENDING_VERIFICATION: { label: 'Pendiente', variant: 'outline' },
+  SUSPENDED: { label: 'Suspendido', variant: 'destructive' },
+}
 
 export function UsersPage() {
   const queryClient = useQueryClient()
@@ -99,9 +108,15 @@ export function UsersPage() {
                     <TableCell className="font-mono text-sm">{user.dni}</TableCell>
                     <TableCell className="text-sm">{user.phone}</TableCell>
                     <TableCell>
-                      <Badge variant={user.isIdentityVerified ? 'secondary' : 'outline'}>
-                        {user.isIdentityVerified ? 'Verificado' : 'Pendiente'}
-                      </Badge>
+                      {(() => {
+                        const kycStatus = user.status ?? (user.isIdentityVerified ? 'VERIFIED' : 'PENDING_VERIFICATION')
+                        const cfg = KYC_BADGE[kycStatus as KycUserStatus] ?? KYC_BADGE.PENDING_VERIFICATION
+                        return (
+                          <Badge variant={cfg.variant} className={cfg.className}>
+                            {cfg.label}
+                          </Badge>
+                        )
+                      })()}
                     </TableCell>
                     <TableCell>
                       <Badge variant={user.role === 'ADMIN' ? 'default' : 'outline'}>{user.role}</Badge>

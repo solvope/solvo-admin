@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Clock, List, AlertTriangle,
-  Users, Menu, X, LogOut,
+  Users, Menu, LogOut,
 } from 'lucide-react'
 import { useAdminAuthStore } from '@/features/admin-auth'
 import { ThemeToggle } from '@/shared/ui/theme-toggle'
@@ -55,7 +55,7 @@ export function AdminLayout() {
                 : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground'
             )}
           >
-            <Icon className="h-4 w-4 flex-shrink-0" />
+            <Icon className="h-4 w-4 shrink-0" />
             {label}
           </NavLink>
         ))}
