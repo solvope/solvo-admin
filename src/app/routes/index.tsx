@@ -7,6 +7,7 @@ import { PendingLoansPage } from '@/pages/PendingLoansPage'
 import { AllLoansPage } from '@/pages/AllLoansPage'
 import { OverdueLoansPage } from '@/pages/OverdueLoansPage'
 import { UsersPage } from '@/pages/UsersPage'
+import { ParametersPage } from '@/pages/ParametersPage'
 
 export function AppRoutes() {
   return (
@@ -23,6 +24,7 @@ export function AppRoutes() {
         <Route path="loans/all" element={<AllLoansPage />} />
         <Route path="loans/overdue" element={<OverdueLoansPage />} />
         <Route path="users" element={<UsersPage />} />
+        <Route path="parameters" element={<ParametersPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

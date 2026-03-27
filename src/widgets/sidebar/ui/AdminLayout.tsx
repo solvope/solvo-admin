@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Clock, List, AlertTriangle,
-  Users, Menu, LogOut,
+  Users, Menu, LogOut, SlidersHorizontal,
 } from 'lucide-react'
 import { useAdminAuthStore } from '@/features/admin-auth'
 import { ThemeToggle } from '@/shared/ui/theme-toggle'
@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { to: '/loans/all', icon: List, label: 'Todos los préstamos' },
   { to: '/loans/overdue', icon: AlertTriangle, label: 'En mora' },
   { to: '/users', icon: Users, label: 'Usuarios' },
+  { to: '/parameters', icon: SlidersHorizontal, label: 'Parametrías' },
 ]
 
 export function AdminLayout() {
