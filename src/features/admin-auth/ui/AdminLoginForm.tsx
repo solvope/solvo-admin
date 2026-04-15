@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+﻿import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -42,7 +42,7 @@ export function AdminLoginForm() {
           <div className="flex items-center gap-3 mb-8">
             <ShieldCheck className="h-10 w-10 text-primary" />
             <div>
-              <h1 className="text-2xl font-bold">Solvo</h1>
+              <h1 className="text-2xl font-bold">Crevo</h1>
               <p className="text-sm opacity-70">Panel de Administración</p>
             </div>
           </div>
@@ -72,12 +72,12 @@ export function AdminLoginForm() {
         <div className="w-full max-w-sm space-y-6">
           <div>
             <h2 className="text-2xl font-bold">Acceso Administrador</h2>
-            <p className="text-muted-foreground mt-1 text-sm">Solo personal autorizado de Solvo</p>
+            <p className="text-muted-foreground mt-1 text-sm">Solo personal autorizado de Crevo</p>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
-              <Input id="email" type="email" placeholder="admin@solvo.pe" {...register('email')} />
+              <Input id="email" type="email" placeholder="admin@crevo.pe" {...register('email')} />
               {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">

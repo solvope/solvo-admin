@@ -1,4 +1,4 @@
-import { apiClient, ADMIN_TOKEN_KEY } from '@/shared/api/client'
+﻿import { apiClient, ADMIN_TOKEN_KEY } from '@/shared/api/client'
 
 interface AdminInfo {
   id: string
@@ -24,10 +24,10 @@ export const adminAuthRepository = {
   saveToken(token: string) { localStorage.setItem(ADMIN_TOKEN_KEY, token) },
   clearToken() { localStorage.removeItem(ADMIN_TOKEN_KEY) },
   getToken(): string | null { return localStorage.getItem(ADMIN_TOKEN_KEY) },
-  saveUser(user: AdminInfo) { localStorage.setItem('solvo_admin_user', JSON.stringify(user)) },
-  clearUser() { localStorage.removeItem('solvo_admin_user') },
+  saveUser(user: AdminInfo) { localStorage.setItem('crevo_admin_user', JSON.stringify(user)) },
+  clearUser() { localStorage.removeItem('crevo_admin_user') },
   getStoredUser(): AdminInfo | null {
-    const raw = localStorage.getItem('solvo_admin_user')
+    const raw = localStorage.getItem('crevo_admin_user')
     return raw ? JSON.parse(raw) : null
   },
 }

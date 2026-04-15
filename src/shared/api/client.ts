@@ -1,6 +1,6 @@
-import axios from 'axios'
+﻿import axios from 'axios'
 
-export const ADMIN_TOKEN_KEY = 'solvo_admin_token'
+export const ADMIN_TOKEN_KEY = 'crevo_admin_token'
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api',

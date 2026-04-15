@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Clock, List, AlertTriangle,
@@ -39,7 +39,7 @@ export function AdminLayout() {
             <span className="text-primary-foreground font-bold text-sm">S</span>
           </div>
           <div>
-            <p className="font-bold text-sidebar-foreground">Solvo Admin</p>
+            <p className="font-bold text-sidebar-foreground">Crevo Admin</p>
             <p className="text-xs text-sidebar-foreground/60">Panel interno</p>
           </div>
         </div>
