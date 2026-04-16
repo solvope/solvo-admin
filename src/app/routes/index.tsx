@@ -8,6 +8,8 @@ import { AllLoansPage } from '@/pages/AllLoansPage'
 import { OverdueLoansPage } from '@/pages/OverdueLoansPage'
 import { DisbursementsPage } from '@/pages/DisbursementsPage'
 import { UsersPage } from '@/pages/UsersPage'
+import { CustomersPage } from '@/pages/CustomersPage'
+import { CustomerDetailPage } from '@/pages/CustomerDetailPage'
 import { AuditLogPage } from '@/pages/AuditLogPage'
 import { ParametersPage } from '@/pages/ParametersPage'
 
@@ -27,6 +29,8 @@ export function AppRoutes() {
         <Route path="loans/overdue" element={<OverdueLoansPage />} />
         <Route path="disbursements" element={<DisbursementsPage />} />
         <Route path="users" element={<UsersPage />} />
+        <Route path="customers" element={<CustomersPage />} />
+        <Route path="customers/:id" element={<CustomerDetailPage />} />
         <Route path="audit-log" element={<AuditLogPage />} />
         <Route path="parameters" element={<ParametersPage />} />
       </Route>

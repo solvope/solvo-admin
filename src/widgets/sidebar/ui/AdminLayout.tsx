@@ -2,7 +2,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Clock, List, AlertTriangle,
-  Users, Menu, LogOut, SlidersHorizontal, Banknote, ShieldCheck,
+  Users, UserRound, Menu, LogOut, SlidersHorizontal, Banknote, ShieldCheck,
 } from 'lucide-react'
 import { useAdminAuthStore } from '@/features/admin-auth'
 import { ThemeToggle } from '@/shared/ui/theme-toggle'
@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { to: '/loans/all', icon: List, label: 'Todos los préstamos' },
   { to: '/loans/overdue', icon: AlertTriangle, label: 'En mora' },
   { to: '/disbursements', icon: Banknote, label: 'Desembolsos' },
+  { to: '/customers', icon: UserRound, label: 'Clientes' },
   { to: '/users', icon: Users, label: 'Usuarios' },
   { to: '/audit-log', icon: ShieldCheck, label: 'Auditoría' },
   { to: '/parameters', icon: SlidersHorizontal, label: 'Parametrías' },
