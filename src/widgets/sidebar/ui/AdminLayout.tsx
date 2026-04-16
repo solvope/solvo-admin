@@ -3,20 +3,30 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Clock, List, AlertTriangle,
   Users, UserRound, Menu, LogOut, SlidersHorizontal, Banknote, ShieldCheck,
+  ClipboardList,
 } from 'lucide-react'
 import { useAdminAuthStore } from '@/features/admin-auth'
+import { WorkQueueBadge } from '@/features/manage-work-queue'
 import { ThemeToggle } from '@/shared/ui/theme-toggle'
 import { Button } from '@/shared/ui/button'
 import { Separator } from '@/shared/ui/separator'
 import { cn } from '@/shared/lib/utils'
 
-const NAV_ITEMS = [
+interface NavItem {
+  to: string
+  icon: typeof LayoutDashboard
+  label: string
+  badge?: React.ComponentType<{ className?: string }>
+}
+
+const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/loans/pending', icon: Clock, label: 'Pendientes' },
   { to: '/loans/all', icon: List, label: 'Todos los préstamos' },
   { to: '/loans/overdue', icon: AlertTriangle, label: 'En mora' },
   { to: '/disbursements', icon: Banknote, label: 'Desembolsos' },
   { to: '/customers', icon: UserRound, label: 'Clientes' },
+  { to: '/work-queue', icon: ClipboardList, label: 'Cola de trabajo', badge: WorkQueueBadge },
   { to: '/users', icon: Users, label: 'Usuarios' },
   { to: '/audit-log', icon: ShieldCheck, label: 'Auditoría' },
   { to: '/parameters', icon: SlidersHorizontal, label: 'Parametrías' },
@@ -47,7 +57,7 @@ export function AdminLayout() {
       </div>
       <Separator className="bg-sidebar-border" />
       <nav className="flex-1 p-3 space-y-1">
-        {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
+        {NAV_ITEMS.map(({ to, icon: Icon, label, badge: BadgeComp }) => (
           <NavLink
             key={to}
             to={to}
@@ -61,6 +71,7 @@ export function AdminLayout() {
           >
             <Icon className="h-4 w-4 shrink-0" />
             {label}
+            {BadgeComp && <BadgeComp />}
           </NavLink>
         ))}
       </nav>

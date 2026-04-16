@@ -10,6 +10,7 @@ import { DisbursementsPage } from '@/pages/DisbursementsPage'
 import { UsersPage } from '@/pages/UsersPage'
 import { CustomersPage } from '@/pages/CustomersPage'
 import { CustomerDetailPage } from '@/pages/CustomerDetailPage'
+import { WorkQueuePage } from '@/pages/WorkQueuePage'
 import { AuditLogPage } from '@/pages/AuditLogPage'
 import { ParametersPage } from '@/pages/ParametersPage'
 
@@ -31,6 +32,7 @@ export function AppRoutes() {
         <Route path="users" element={<UsersPage />} />
         <Route path="customers" element={<CustomersPage />} />
         <Route path="customers/:id" element={<CustomerDetailPage />} />
+        <Route path="work-queue" element={<WorkQueuePage />} />
         <Route path="audit-log" element={<AuditLogPage />} />
         <Route path="parameters" element={<ParametersPage />} />
       </Route>
