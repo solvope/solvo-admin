@@ -2,7 +2,12 @@
 
 @custom-variant dark (&:is(.dark, .dark *));
 
+button, [role="button"] {
+  cursor: pointer;
+}
+
 @theme inline {
+  /* ─── shadcn semantic tokens (light/dark adapt via :root and .dark) ──────── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -26,65 +31,233 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+
+  /* ─── Crevo brand tokens (stable, do NOT invert between themes) ─────────── */
+  --color-brand-primary: var(--brand-primary);          /* #0A192F navy */
+  --color-brand-primary-hover: var(--brand-primary-hover);
+  --color-brand-secondary: var(--brand-secondary);      /* #D4AF37 gold */
+  --color-brand-secondary-hover: var(--brand-secondary-hover);
+  --color-brand-accent: var(--brand-accent);            /* #00E5FF cyan */
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-card: var(--brand-card);
+  --color-brand-text: var(--brand-text);
+  --color-brand-text-muted: var(--brand-text-muted);
+  --color-brand-border: var(--brand-border);
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
 }
 
+/* ─── Light mode ─────────────────────────────────────────────────────────── */
 :root {
-  --background: oklch(0.984 0.003 247.858);
-  --foreground: oklch(0.145 0.042 264.695);
+  --background: oklch(0.99 0.005 247);                /* #F8FAFC-ish */
+  --foreground: oklch(0.18 0.05 248);                 /* navy text */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0.042 264.695);
+  --card-foreground: oklch(0.18 0.05 248);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0.042 264.695);
-  --primary: oklch(0.52 0.22 263);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.60 0.15 163);
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.961 0.006 247);
-  --muted-foreground: oklch(0.554 0.019 264);
-  --accent: oklch(0.70 0.18 48);
-  --accent-foreground: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.05 248);
+
+  /* Primary = navy. Most "default" buttons / focus rings inherit from this. */
+  --primary: oklch(0.18 0.05 248);                    /* #0A192F navy */
+  --primary-foreground: oklch(0.99 0 0);              /* white */
+
+  /* Secondary surface — neutral light slate; `bg-secondary` reads soft. */
+  --secondary: oklch(0.97 0.005 247);
+  --secondary-foreground: oklch(0.18 0.05 248);
+
+  --muted: oklch(0.97 0.005 247);
+  --muted-foreground: oklch(0.55 0.02 247);
+
+  /* Accent = cyan — used for highlights, focus, "info" badges */
+  --accent: oklch(0.94 0.025 198);                    /* cyan tint */
+  --accent-foreground: oklch(0.18 0.05 248);
+
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.910 0.013 264);
-  --input: oklch(0.910 0.013 264);
-  --ring: oklch(0.52 0.22 263);
+  --border: oklch(0.92 0.01 247);
+  --input: oklch(0.92 0.01 247);
+  --ring: oklch(0.80 0.13 198);                       /* cyan focus ring */
+
   --radius: 0.75rem;
-  --sidebar: oklch(0.20 0.05 265);
-  --sidebar-foreground: oklch(0.90 0.01 264);
-  --sidebar-border: oklch(0.27 0.05 265);
-  --sidebar-accent: oklch(0.27 0.05 265);
+
+  /* Sidebar = navy primary always */
+  --sidebar: oklch(0.18 0.05 248);                    /* #0A192F */
+  --sidebar-foreground: oklch(0.96 0.005 247);
+  --sidebar-border: oklch(1 0 0 / 6%);
+  --sidebar-accent: oklch(1 0 0 / 6%);                /* hover = white/6 */
+  --sidebar-accent-foreground: oklch(0.99 0 0);
+
+  /* ─── Crevo brand — light ────────────────────────────────────────────── */
+  --brand-primary: #0A192F;
+  --brand-primary-hover: #112240;
+  --brand-secondary: #D4AF37;
+  --brand-secondary-hover: #B8932D;
+  --brand-accent: #00E5FF;
+  --brand-surface: #F8FAFC;
+  --brand-card: #FFFFFF;
+  --brand-text: #0A192F;
+  --brand-text-muted: #64748B;
+  --brand-border: #E2E8F0;
 }
 
+/* ─── Dark mode ──────────────────────────────────────────────────────────── */
 .dark {
-  --background: oklch(0.145 0.04 255);
-  --foreground: oklch(0.961 0.005 247);
-  --card: oklch(0.19 0.04 260);
-  --card-foreground: oklch(0.961 0.005 247);
-  --popover: oklch(0.19 0.04 260);
-  --popover-foreground: oklch(0.961 0.005 247);
-  --primary: oklch(0.65 0.20 263);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.60 0.15 163);
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.25 0.04 255);
-  --muted-foreground: oklch(0.65 0.015 264);
-  --accent: oklch(0.70 0.18 48);
-  --accent-foreground: oklch(1 0 0);
-  --destructive: oklch(0.55 0.20 27);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.25 0.04 255);
-  --input: oklch(0.25 0.04 255);
-  --ring: oklch(0.65 0.20 263);
-  --sidebar: oklch(0.12 0.04 260);
-  --sidebar-foreground: oklch(0.90 0.01 264);
-  --sidebar-border: oklch(0.20 0.04 260);
-  --sidebar-accent: oklch(0.20 0.04 260);
+  --background: oklch(0.145 0.04 255);                /* deep slate */
+  --foreground: oklch(0.96 0.005 247);
+  --card: oklch(0.21 0.04 255);
+  --card-foreground: oklch(0.96 0.005 247);
+  --popover: oklch(0.21 0.04 255);
+  --popover-foreground: oklch(0.96 0.005 247);
+
+  /* In dark mode, primary becomes gold so contrast pops on the dark surface */
+  --primary: oklch(0.76 0.13 83);                     /* #D4AF37 gold */
+  --primary-foreground: oklch(0.18 0.05 248);         /* navy text on gold */
+
+  --secondary: oklch(0.27 0.04 255);
+  --secondary-foreground: oklch(0.96 0.005 247);
+
+  --muted: oklch(0.27 0.04 255);
+  --muted-foreground: oklch(0.70 0.015 247);
+
+  --accent: oklch(0.22 0.04 255);
+  --accent-foreground: oklch(0.96 0.005 247);
+
+  --destructive: oklch(0.65 0.20 27);
+  --destructive-foreground: oklch(0.97 0 0);
+
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.76 0.13 83);                        /* gold focus ring */
+
+  /* Sidebar stays navy in both themes — it's the brand surface */
+  --sidebar: oklch(0.18 0.05 248);
+  --sidebar-foreground: oklch(0.96 0.005 247);
+  --sidebar-border: oklch(1 0 0 / 6%);
+  --sidebar-accent: oklch(1 0 0 / 8%);
+  --sidebar-accent-foreground: oklch(0.99 0 0);
+
+  /* ─── Crevo brand — dark (3 brand colors NEVER invert) ───────────────── */
+  --brand-primary: #0A192F;
+  --brand-primary-hover: #112240;
+  --brand-secondary: #D4AF37;
+  --brand-secondary-hover: #E6C24A;
+  --brand-accent: #00E5FF;
+  --brand-surface: #0F172A;
+  --brand-card: #1E293B;
+  --brand-text: #F1F5F9;
+  --brand-text-muted: #94A3B8;
+  --brand-border: rgba(255, 255, 255, 0.08);
 }
 
+/* ─── Base ────────────────────────────────────────────────────────────────── */
 @layer base {
-  * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground; }
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply antialiased bg-background text-foreground;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.30 0.03 255);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.40 0.03 255);
+  }
+}
+
+/* ─── Brand utilities ─────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #D4AF37 0%, #00E5FF 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .bg-gradient-brand {
+    background: linear-gradient(135deg, #D4AF37 0%, #00E5FF 100%);
+  }
+
+  .bg-gradient-navy {
+    background: linear-gradient(135deg, #0A192F 0%, #112240 60%, #0A192F 100%);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 32px rgba(212, 175, 55, 0.30);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 32px rgba(0, 229, 255, 0.30);
+  }
+
+  .glow-navy {
+    box-shadow: 0 12px 32px -8px rgba(10, 25, 47, 0.40);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .bg-grid-navy {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .bg-dot-pattern {
+    background-image: radial-gradient(rgba(0, 229, 255, 0.10) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.40; }
+  50%      { opacity: 0.75; }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.4s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
 }
