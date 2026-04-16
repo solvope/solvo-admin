@@ -9,6 +9,8 @@ import { Badge } from '@/shared/ui/badge'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/shared/ui/dialog'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/shared/ui/table'
+import { Textarea } from '@/shared/ui/textarea'
+import { Label } from '@/shared/ui/label'
 import { formatCurrency, formatDate } from '@/shared/lib/utils'
 import type { Loan } from '@/entities/loan'
 
@@ -136,9 +138,10 @@ export function PendingLoansPage() {
               Rechazarás el préstamo de <strong>{rejectLoan?.user?.firstName} {rejectLoan?.user?.lastName}</strong> por <strong>{rejectLoan ? formatCurrency(rejectLoan.amount) : ''}</strong>.
             </p>
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Motivo del rechazo</label>
-              <textarea
-                className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              <Label htmlFor="reject-reason">Motivo del rechazo</Label>
+              <Textarea
+                id="reject-reason"
+                className="min-h-[80px]"
                 placeholder="Explica el motivo del rechazo..."
                 value={rejectReason}
                 onChange={e => setRejectReason(e.target.value)}

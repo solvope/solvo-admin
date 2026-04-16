@@ -10,6 +10,7 @@ import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Badge } from '@/shared/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/shared/ui/table'
 import { formatDateTime } from '@/shared/lib/utils'
@@ -91,14 +92,20 @@ export function AuditLogPage() {
           {mode === 'entity' ? (
             <div className="flex gap-3 items-end">
               <div className="space-y-1.5">
-                <Label>Tipo de entidad</Label>
-                <select
+                <Label htmlFor="entity-type">Tipo de entidad</Label>
+                <Select
                   value={entityType}
-                  onChange={e => setEntityType(e.target.value as AuditEntityType)}
-                  className="flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                  onValueChange={(v) => setEntityType(v as AuditEntityType)}
                 >
-                  {ENTITY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
+                  <SelectTrigger id="entity-type" className="w-[180px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ENTITY_TYPES.map(t => (
+                      <SelectItem key={t} value={t}>{t}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex-1 space-y-1.5">
                 <Label>ID de la entidad</Label>

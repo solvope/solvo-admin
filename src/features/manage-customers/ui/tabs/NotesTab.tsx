@@ -6,6 +6,8 @@ import { Card, CardContent } from '@/shared/ui/card'
 import { Button } from '@/shared/ui/button'
 import { Textarea } from '@/shared/ui/textarea'
 import { Badge } from '@/shared/ui/badge'
+import { Checkbox } from '@/shared/ui/checkbox'
+import { Label } from '@/shared/ui/label'
 import { formatDateTime, cn } from '@/shared/lib/utils'
 import { customersRepository } from '@/features/manage-customers/api/customersRepository'
 import type { CustomerAdminNote } from '@/entities/customer'
@@ -50,15 +52,16 @@ export function NotesTab({ userId, notes, currentAdminId }: Props) {
             onChange={e => setDraft(e.target.value)}
           />
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
-              <input
-                type="checkbox"
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="pin-note"
                 checked={draftPinned}
-                onChange={e => setDraftPinned(e.target.checked)}
-                className="h-4 w-4"
+                onCheckedChange={(v) => setDraftPinned(v === true)}
               />
-              Fijar al tope
-            </label>
+              <Label htmlFor="pin-note" className="text-sm text-muted-foreground cursor-pointer font-normal">
+                Fijar al tope
+              </Label>
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">{draft.length} / 4000</span>
               <Button
