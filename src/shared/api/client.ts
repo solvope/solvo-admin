@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios'
+import { clearAuthLocalStorage } from '@/shared/lib/sessionStorage'
 
 // ─── Cookie names shared with the backend ────────────────────────────────────
 // Must stay in sync with `src/shared/utils/authCookies.ts` on the server.
@@ -125,11 +126,11 @@ apiClient.interceptors.response.use(
  *
  * HttpOnly cookies (`crevo_at`, `crevo_rt`) can only be cleared by a server
  * `Set-Cookie` response — that's handled by the `/auth/logout` call above.
- * Here we clear the non-HttpOnly CSRF cookie and localStorage so the next
- * login starts from a perfectly clean slate.
+ * Here we clear the non-HttpOnly CSRF cookie and wipe localStorage —
+ * preserving long-lived UX preferences (theme) per `clearAuthLocalStorage()`.
  */
 function clearClientSession() {
-  localStorage.removeItem(ADMIN_USER_KEY)
+  clearAuthLocalStorage()
   if (typeof document !== 'undefined') {
     document.cookie = `${CSRF_COOKIE_NAME}=; Path=/; Max-Age=0`
   }
