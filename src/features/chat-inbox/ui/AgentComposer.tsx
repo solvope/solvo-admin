@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Send, Loader2 } from 'lucide-react'
+import { Send, Loader2, Smile } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/shared/ui/button'
 import { chatInboxRepository } from '../api/chatInboxRepository'
@@ -8,8 +8,11 @@ import { conversationQueryKey } from '../hooks/useConversationDetail'
 import { useChatInboxStore } from '../model/useChatInboxStore'
 import { TEMP_ID_PREFIX } from '../types'
 import type { ChatConversationDetail, ChatMessageAdminView } from '../types'
+import { EmojiPicker } from './EmojiPicker'
 
 const MAX_LEN = 4000
+/** Hard cap on auto-grow: 4 visible rows. After this, scroll appears. */
+const MAX_VISIBLE_ROWS = 4
 
 interface Props {
   conversationId: string
@@ -27,15 +30,48 @@ export function AgentComposer({ conversationId, isClosed, agentId }: Props) {
   const qc = useQueryClient()
   const notifyTyping = useChatInboxStore((s) => s.notifyTyping)
   const [value, setValue] = useState('')
+  const [pickerOpen, setPickerOpen] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
-  // Auto-grow up to a max height.
+  // Resize on every value change. Caps at MAX_VISIBLE_ROWS rows
+  // (computed from real line-height + padding so it adapts to the
+  // current font/line-height instead of a hardcoded pixel value).
+  // overflow-y is hidden until we hit the cap, then auto — so the
+  // scrollbar only appears once the content actually exceeds 4 rows.
   useEffect(() => {
     const ta = textareaRef.current
     if (!ta) return
+    const style = window.getComputedStyle(ta)
+    const lineHeightRaw = parseFloat(style.lineHeight)
+    const lineHeight = Number.isFinite(lineHeightRaw)
+      ? lineHeightRaw
+      : parseFloat(style.fontSize) * 1.2
+    const paddingY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
+    const maxHeight = lineHeight * MAX_VISIBLE_ROWS + paddingY
+
     ta.style.height = 'auto'
-    ta.style.height = `${Math.min(ta.scrollHeight, 140)}px`
+    const next = Math.min(ta.scrollHeight, maxHeight)
+    ta.style.height = `${next}px`
+    ta.style.overflowY = ta.scrollHeight > maxHeight ? 'auto' : 'hidden'
   }, [value])
+
+  /** Insert text at the current selection without losing focus. */
+  const insertAtCursor = (text: string) => {
+    const ta = textareaRef.current
+    if (!ta) {
+      setValue((v) => v + text)
+      return
+    }
+    const start = ta.selectionStart ?? value.length
+    const end = ta.selectionEnd ?? value.length
+    const next = value.slice(0, start) + text + value.slice(end)
+    setValue(next)
+    requestAnimationFrame(() => {
+      ta.focus()
+      const cursor = start + text.length
+      ta.selectionStart = ta.selectionEnd = cursor
+    })
+  }
 
   const send = useMutation({
     mutationFn: (body: string) => chatInboxRepository.sendMessage(conversationId, body),
@@ -138,6 +174,28 @@ export function AgentComposer({ conversationId, isClosed, agentId }: Props) {
     // textarea+button stay centered with the thread above.
     <div className="px-3 py-2.5">
       <div className="flex items-end gap-2">
+        {/* Emoji picker trigger — wrapper is relative so the popover can
+            anchor to it via absolute positioning. */}
+        <div className="relative shrink-0">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setPickerOpen((p) => !p)}
+            aria-label={pickerOpen ? 'Cerrar selector de emojis' : 'Abrir selector de emojis'}
+            aria-expanded={pickerOpen}
+            className="h-9 w-9 text-muted-foreground hover:text-foreground"
+          >
+            <Smile className="h-4 w-4" aria-hidden="true" />
+          </Button>
+          {pickerOpen && (
+            <EmojiPicker
+              onSelect={(emoji) => insertAtCursor(emoji)}
+              onClose={() => setPickerOpen(false)}
+            />
+          )}
+        </div>
+
         <textarea
           ref={textareaRef}
           value={value}
