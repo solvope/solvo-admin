@@ -11,6 +11,7 @@ import { UsersPage } from '@/pages/UsersPage'
 import { CustomersPage } from '@/pages/CustomersPage'
 import { CustomerDetailPage } from '@/pages/CustomerDetailPage'
 import { WorkQueuePage } from '@/pages/WorkQueuePage'
+import { ChatInboxPage } from '@/pages/ChatInboxPage'
 import { AuditLogPage } from '@/pages/AuditLogPage'
 import { ParametersPage } from '@/pages/ParametersPage'
 
@@ -33,6 +34,8 @@ export function AppRoutes() {
         <Route path="customers" element={<CustomersPage />} />
         <Route path="customers/:id" element={<CustomerDetailPage />} />
         <Route path="work-queue" element={<WorkQueuePage />} />
+        <Route path="chat" element={<ChatInboxPage />} />
+        <Route path="chat/:conversationId" element={<ChatInboxPage />} />
         <Route path="audit-log" element={<AuditLogPage />} />
         <Route path="parameters" element={<ParametersPage />} />
       </Route>

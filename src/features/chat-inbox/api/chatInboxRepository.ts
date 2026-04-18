@@ -1,0 +1,74 @@
+import { apiClient } from '@/shared/api/client'
+import type {
+  ChatInboxListResult,
+  ChatConversationDetail,
+  ChatConversationAdminView,
+  ChatMessageAdminView,
+  InboxFilters,
+} from '../types'
+
+/**
+ * REST client for the agent-facing chat endpoints. Every call is wrapped
+ * in the standard {success, message, data} envelope by the backend; we
+ * unwrap data here so consumers see the domain shape directly.
+ *
+ * Filter mapping:
+ *   - tab='mine'        → assignedTo = current admin id (caller passes it in)
+ *   - tab='unassigned'  → unassignedOnly = true
+ *   - tab='all'         → no filter (default)
+ */
+export const chatInboxRepository = {
+  async list(filters: InboxFilters = {}, limit = 50, offset = 0): Promise<ChatInboxListResult> {
+    const params: Record<string, string | number | boolean> = {
+      limit,
+      offset,
+    }
+    if (filters.status) params.status = filters.status
+    if (filters.assignedTo) params.assignedTo = filters.assignedTo
+    if (filters.unassignedOnly) params.unassignedOnly = true
+
+    const { data } = await apiClient.get('/chat/admin/inbox', { params })
+    return (data?.data ?? { items: [], total: 0, limit, offset }) as ChatInboxListResult
+  },
+
+  /**
+   * Fetch a single conversation + ALL its messages. Set markRead=false to
+   * inspect a thread without flipping read receipts (e.g. when previewing
+   * from a notification).
+   */
+  async getConversation(
+    conversationId: string,
+    options: { markRead?: boolean } = {},
+  ): Promise<ChatConversationDetail> {
+    const params: Record<string, string | boolean> = {}
+    if (options.markRead === false) params.markRead = false
+
+    const { data } = await apiClient.get(
+      `/chat/admin/conversations/${conversationId}`,
+      Object.keys(params).length > 0 ? { params } : undefined,
+    )
+    return data?.data as ChatConversationDetail
+  },
+
+  /** Agent reply. Auto-assigns the conversation to the agent if unassigned. */
+  async sendMessage(conversationId: string, body: string): Promise<ChatMessageAdminView> {
+    const { data } = await apiClient.post(`/chat/admin/conversations/${conversationId}/messages`, {
+      body,
+    })
+    return data?.data as ChatMessageAdminView
+  },
+
+  /** Explicit assign — if `agentId` is omitted the backend self-assigns to caller. */
+  async assign(conversationId: string, agentId?: string): Promise<ChatConversationAdminView> {
+    const { data } = await apiClient.post(`/chat/admin/conversations/${conversationId}/assign`, {
+      agentId,
+    })
+    return data?.data as ChatConversationAdminView
+  },
+
+  /** Close the conversation. Backend emits a SYSTEM closing notice + broadcast. */
+  async close(conversationId: string): Promise<ChatConversationAdminView> {
+    const { data } = await apiClient.post(`/chat/admin/conversations/${conversationId}/close`, {})
+    return data?.data as ChatConversationAdminView
+  },
+}

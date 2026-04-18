@@ -3,10 +3,11 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Clock, List, AlertTriangle,
   Users, UserRound, Menu, LogOut, SlidersHorizontal, Banknote, ShieldCheck,
-  ClipboardList, Zap,
+  ClipboardList, Zap, Headphones,
 } from 'lucide-react'
 import { useAdminAuthStore } from '@/features/admin-auth'
 import { WorkQueueBadge } from '@/features/manage-work-queue'
+import { ChatUnreadBadge } from '@/features/chat-inbox'
 import { ThemeToggle } from '@/shared/ui/theme-toggle'
 import { Button } from '@/shared/ui/button'
 import { cn } from '@/shared/lib/utils'
@@ -29,6 +30,7 @@ const NAV_ITEMS: NavItem[] = [
 
   { to: '/customers', icon: UserRound, label: 'Clientes', group: 'platform' },
   { to: '/work-queue', icon: ClipboardList, label: 'Cola de trabajo', badge: WorkQueueBadge, group: 'platform' },
+  { to: '/chat', icon: Headphones, label: 'Chat soporte', badge: ChatUnreadBadge, group: 'platform' },
   { to: '/users', icon: Users, label: 'Usuarios', group: 'platform' },
   { to: '/audit-log', icon: ShieldCheck, label: 'Auditoría', group: 'platform' },
   { to: '/parameters', icon: SlidersHorizontal, label: 'Parametrías', group: 'platform' },
