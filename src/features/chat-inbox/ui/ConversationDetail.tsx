@@ -14,8 +14,10 @@ import { Badge } from '@/shared/ui/badge'
 import { formatDateTime } from '@/shared/lib/utils'
 import { chatInboxRepository } from '../api/chatInboxRepository'
 import { useConversationDetail, conversationQueryKey } from '../hooks/useConversationDetail'
+import { useChatInboxStore } from '../model/useChatInboxStore'
 import { MessageBubble } from './MessageBubble'
 import { AgentComposer } from './AgentComposer'
+import { TypingIndicator } from './TypingIndicator'
 import type { ChatConversationDetail as Detail } from '../types'
 
 interface Props {
@@ -36,6 +38,7 @@ interface Props {
  */
 export function ConversationDetail({ conversationId, agentId }: Props) {
   const qc = useQueryClient()
+  const isUserTyping = useChatInboxStore((s) => s.isUserTyping)
   const { data, isLoading, isError, error } = useConversationDetail(conversationId)
 
   const assignMutation = useMutation({
@@ -66,9 +69,11 @@ export function ConversationDetail({ conversationId, agentId }: Props) {
 
   const endRef = useRef<HTMLDivElement | null>(null)
   const messageCount = data?.messages?.length ?? 0
+  // Auto-scroll on new message AND when the typing indicator appears, so
+  // the agent sees the user start writing without manually scrolling.
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-  }, [messageCount])
+  }, [messageCount, isUserTyping])
 
   if (isLoading) {
     return (
@@ -167,25 +172,39 @@ export function ConversationDetail({ conversationId, agentId }: Props) {
         </div>
       </header>
 
-      {/* Thread */}
-      <ol className="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-muted/20">
-        {messages.length === 0 ? (
-          <li className="flex items-center justify-center h-full text-sm text-muted-foreground gap-2">
-            <UserCircle2 className="h-4 w-4" aria-hidden="true" />
-            <span>Sin mensajes aún.</span>
-          </li>
-        ) : (
-          renderMessagesWithDaySeparators(messages)
-        )}
-        <div ref={endRef} />
-      </ol>
+      {/* Thread — content centered with max-width so very wide monitors
+          don't stretch bubbles edge-to-edge. The scroll container stays
+          full-width so the scrollbar sits at the panel's right edge. */}
+      <div className="flex-1 overflow-y-auto bg-muted/20">
+        <ol className="max-w-3xl mx-auto px-4 py-3 space-y-2">
+          {messages.length === 0 ? (
+            <li className="flex items-center justify-center h-40 text-sm text-muted-foreground gap-2">
+              <UserCircle2 className="h-4 w-4" aria-hidden="true" />
+              <span>Sin mensajes aún.</span>
+            </li>
+          ) : (
+            renderMessagesWithDaySeparators(messages)
+          )}
+          {isUserTyping && (
+            <li className="pt-1">
+              <TypingIndicator label="El usuario está escribiendo" />
+            </li>
+          )}
+          <div ref={endRef} />
+        </ol>
+      </div>
 
-      {/* Composer */}
-      <AgentComposer
-        conversationId={conversationId}
-        isClosed={isClosed}
-        agentId={agentId}
-      />
+      {/* Composer — same max-width centering so input aligns with the
+          last message bubble above it. */}
+      <div className="border-t border-border bg-card">
+        <div className="max-w-3xl mx-auto">
+          <AgentComposer
+            conversationId={conversationId}
+            isClosed={isClosed}
+            agentId={agentId}
+          />
+        </div>
+      </div>
     </div>
   )
 }

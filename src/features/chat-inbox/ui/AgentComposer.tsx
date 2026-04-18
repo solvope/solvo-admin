@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Button } from '@/shared/ui/button'
 import { chatInboxRepository } from '../api/chatInboxRepository'
 import { conversationQueryKey } from '../hooks/useConversationDetail'
+import { useChatInboxStore } from '../model/useChatInboxStore'
 import { TEMP_ID_PREFIX } from '../types'
 import type { ChatConversationDetail, ChatMessageAdminView } from '../types'
 
@@ -24,6 +25,7 @@ interface Props {
  */
 export function AgentComposer({ conversationId, isClosed, agentId }: Props) {
   const qc = useQueryClient()
+  const notifyTyping = useChatInboxStore((s) => s.notifyTyping)
   const [value, setValue] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -134,7 +136,14 @@ export function AgentComposer({ conversationId, isClosed, agentId }: Props) {
         <textarea
           ref={textareaRef}
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value)
+            // Fire-and-forget — store debounces internally so this is safe
+            // to call on every keystroke. Skip empty value (e.g. user just
+            // backspaced everything) to avoid emitting a "typing" signal
+            // when there's nothing to type.
+            if (e.target.value.length > 0) notifyTyping()
+          }}
           onKeyDown={handleKeyDown}
           placeholder="Escribe tu respuesta…"
           rows={1}

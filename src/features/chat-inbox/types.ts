@@ -69,10 +69,21 @@ export interface ChatBroadcastConversationClosedEvent {
   closedAt: string
 }
 
+/** Transient "X is typing" — emitted client→client (no backend round-trip),
+ *  debounced on sender, auto-cleared 5s after last event on receiver. */
+export interface ChatBroadcastTypingEvent {
+  type: 'typing'
+  conversationId: string
+  senderType: 'user' | 'agent'
+  isTyping: boolean
+  at: string
+}
+
 export type ChatBroadcastEvent =
   | ChatBroadcastMessageEvent
   | ChatBroadcastReadReceiptEvent
   | ChatBroadcastConversationClosedEvent
+  | ChatBroadcastTypingEvent
 
 // ─── Optimistic UI helpers ───────────────────────────────────────────────────
 

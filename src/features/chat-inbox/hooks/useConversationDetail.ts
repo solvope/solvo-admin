@@ -132,5 +132,11 @@ function _applyEventToCache(
         messages: prev.messages,
       }
     }
+    case 'typing': {
+      // Typing events don't touch the React Query cache — they're
+      // handled by the inbox store directly (isUserTyping flag).
+      // Returning prev keeps the cache untouched.
+      return prev
+    }
   }
 }

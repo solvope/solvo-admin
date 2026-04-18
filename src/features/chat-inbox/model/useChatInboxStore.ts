@@ -26,6 +26,9 @@ type RealtimeListener = (event: ChatBroadcastEvent) => void
 
 interface ChatInboxState {
   activeConversationId: string | null
+  /** "Usuario está escribiendo…" — driven by typing broadcast events
+   *  from the user's chat widget. Auto-clears 5s after last event. */
+  isUserTyping: boolean
   _channel: RealtimeChannel | null
   _listeners: Set<RealtimeListener>
 
@@ -34,11 +37,33 @@ interface ChatInboxState {
    *  conversation. Returns an unsubscribe function. Used by React Query
    *  hooks to invalidate / merge cache on incoming events. */
   onEvent: (listener: RealtimeListener) => () => void
+  /** Tell the user we're typing. Throttled to 1 emit / 2s; schedules a
+   *  "stopped" signal 3s after the last keystroke. The composer calls
+   *  this on every keypress — debounce lives here. */
+  notifyTyping: () => void
   unsubscribe: () => void
+}
+
+// ─── Module-level transients (timer state, doesn't drive renders) ────────
+let _typingLastEmit = 0
+let _typingStoppedTimer: ReturnType<typeof setTimeout> | null = null
+let _userTypingClearTimer: ReturnType<typeof setTimeout> | null = null
+
+function _clearTypingTimers(): void {
+  if (_typingStoppedTimer) {
+    clearTimeout(_typingStoppedTimer)
+    _typingStoppedTimer = null
+  }
+  if (_userTypingClearTimer) {
+    clearTimeout(_userTypingClearTimer)
+    _userTypingClearTimer = null
+  }
+  _typingLastEmit = 0
 }
 
 export const useChatInboxStore = create<ChatInboxState>((set, get) => ({
   activeConversationId: null,
+  isUserTyping: false,
   _channel: null,
   _listeners: new Set(),
 
@@ -50,9 +75,10 @@ export const useChatInboxStore = create<ChatInboxState>((set, get) => ({
     if (_channel) {
       void supabase.removeChannel(_channel)
     }
+    _clearTypingTimers()
 
     if (!id) {
-      set({ activeConversationId: null, _channel: null })
+      set({ activeConversationId: null, _channel: null, isUserTyping: false })
       return
     }
 
@@ -69,9 +95,33 @@ export const useChatInboxStore = create<ChatInboxState>((set, get) => ({
       .on('broadcast', { event: 'conversation_closed' }, (payload) =>
         _fanout(get, payload.payload as ChatBroadcastEvent),
       )
+      .on('broadcast', { event: 'typing' }, (payload) => {
+        // Typing is handled here directly (state lives on the store, not
+        // in React Query cache) — no fan-out needed.
+        const event = payload.payload as ChatBroadcastEvent
+        if (event?.type !== 'typing') return
+        // Only the USER's typing is interesting to the agent UI — we
+        // don't render an indicator for ourselves.
+        if (event.senderType !== 'user') return
+
+        if (_userTypingClearTimer) clearTimeout(_userTypingClearTimer)
+
+        if (event.isTyping) {
+          set({ isUserTyping: true })
+          // Failsafe: drop the indicator after 5s if no "stopped"
+          // event lands (network blip, tab close, lost broadcast).
+          _userTypingClearTimer = setTimeout(() => {
+            set({ isUserTyping: false })
+            _userTypingClearTimer = null
+          }, 5000)
+        } else {
+          set({ isUserTyping: false })
+          _userTypingClearTimer = null
+        }
+      })
       .subscribe()
 
-    set({ activeConversationId: id, _channel: channel })
+    set({ activeConversationId: id, _channel: channel, isUserTyping: false })
   },
 
   onEvent: (listener: RealtimeListener) => {
@@ -81,12 +131,56 @@ export const useChatInboxStore = create<ChatInboxState>((set, get) => ({
     }
   },
 
+  notifyTyping: () => {
+    const channel = get()._channel
+    const conversationId = get().activeConversationId
+    if (!channel || !conversationId) return
+
+    const now = Date.now()
+    if (now - _typingLastEmit > 2000) {
+      void channel.send({
+        type: 'broadcast',
+        event: 'typing',
+        payload: {
+          type: 'typing',
+          conversationId,
+          senderType: 'agent',
+          isTyping: true,
+          at: new Date().toISOString(),
+        },
+      })
+      _typingLastEmit = now
+    }
+
+    if (_typingStoppedTimer) clearTimeout(_typingStoppedTimer)
+    _typingStoppedTimer = setTimeout(() => {
+      const c = get()._channel
+      const id = get().activeConversationId
+      if (c && id) {
+        void c.send({
+          type: 'broadcast',
+          event: 'typing',
+          payload: {
+            type: 'typing',
+            conversationId: id,
+            senderType: 'agent',
+            isTyping: false,
+            at: new Date().toISOString(),
+          },
+        })
+      }
+      _typingLastEmit = 0
+      _typingStoppedTimer = null
+    }, 3000)
+  },
+
   unsubscribe: () => {
     const { _channel } = get()
     if (_channel) {
       void supabase.removeChannel(_channel)
     }
-    set({ activeConversationId: null, _channel: null })
+    _clearTypingTimers()
+    set({ activeConversationId: null, _channel: null, isUserTyping: false })
   },
 }))
 
